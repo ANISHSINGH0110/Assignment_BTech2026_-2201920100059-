@@ -1,5 +1,5 @@
 // Platform used programiz
-https://app.programiz.pro/course/practice-cpp-oop/area-of-rectangle?page=1
+//https://app.programiz.pro/course/practice-cpp-oop/area-of-rectangle?page=1
 
 //Problem Description
 //Create a program to find the area of a rectangle.
