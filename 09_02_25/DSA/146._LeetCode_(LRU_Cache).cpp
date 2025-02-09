@@ -1,0 +1,75 @@
+/*
+Design and implement a Least Recently Used (LRU) Cache that supports:
+
+get(key) — Retrieve the value associated with the key if it exists, otherwise return -1.
+put(key, value) — Insert a key-value pair. If the cache reaches its capacity, evict the least recently used item before adding the new pair.
+
+*/
+struct Node {
+    int key;
+    int value;
+    shared_ptr<Node> prev;
+    shared_ptr<Node> next;
+  };
+  class LRUCache {
+  public:
+      int capacity;
+      unordered_map<int, shared_ptr<Node>> keyToNode;
+      shared_ptr<Node> head = make_shared<Node>(-1, -1);
+      shared_ptr<Node> tail = make_shared<Node>(-1, -1);
+  
+      void join(shared_ptr<Node> node1, shared_ptr<Node> node2) {
+          node1->next = node2;
+          node2->prev = node1;
+      }
+  
+      void moveToHead(shared_ptr<Node> node) {
+          join(node, head->next);
+          join(head, node);
+      }
+  
+      void remove(shared_ptr<Node> node) {
+          join(node->prev, node->next);
+      }
+      LRUCache(int capacity) : capacity(capacity) {
+         join(head, tail);
+      }
+  
+      
+      int get(int key) {
+          auto it = keyToNode.find(key);
+          if (it == keyToNode.cend())
+          return -1;
+  
+          shared_ptr<Node> node = it->second;
+          remove(node);
+          moveToHead(node);
+          return node->value;
+      }
+      
+      void put(int key, int value) {
+          if (const auto it = keyToNode.find(key); it != keyToNode.cend()) {
+          shared_ptr<Node> node = it->second;
+          node->value = value;
+          remove(node);
+          moveToHead(node);
+          return;
+          }
+  
+          if (keyToNode.size() == capacity) {
+          shared_ptr<Node> lastNode = tail->prev;
+          keyToNode.erase(lastNode->key);
+          remove(lastNode);
+          }
+  
+          moveToHead(make_shared<Node>(key, value));
+          keyToNode[key] = head->next;
+      }
+  };
+  
+  /**
+   * Your LRUCache object will be instantiated and called as such:
+   * LRUCache* obj = new LRUCache(capacity);
+   * int param_1 = obj->get(key);
+   * obj->put(key,value);
+   */
